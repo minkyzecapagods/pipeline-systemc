@@ -11,7 +11,7 @@ namespace {
      * @note  A Unidade de Controle é responsável por decidir se o resultado
      *        será efetivamente escrito em registrador (sinal reg_write).
      */
-    enum OperationCode : sc_uint<4> {
+    enum OperationCode {
         OP_AND = 0,
         OP_OR  = 1,
         OP_XOR = 2,
@@ -25,12 +25,13 @@ namespace {
 void ALU::execute_operation() {
     const sc_uint<16> a_val = operand_a.read();
     const sc_uint<16> b_val = operand_b.read();
-    const OperationCode op_code = static_cast<OperationCode>(operation_code.read().to_uint());
+    const sc_uint<4>  op_val = operation_code.read();
+    const unsigned int op_int = op_val.to_uint();
 
     sc_uint<16> result_val = 0;
 
     // Executa a operação selecionada
-    switch (op_code) {
+    switch (op_int) {
         case OP_AND: result_val = a_val & b_val;  break;
         case OP_OR:  result_val = a_val | b_val;  break;
         case OP_XOR: result_val = a_val ^ b_val;  break;
