@@ -1,3 +1,11 @@
+/**
+ * @file   alu.h
+ * @brief Unidade Lógica e Aritmética combinacional de 16 bits.
+ * 
+ * Executa uma operação definida por `operation_code` sobre `operand_a` e `operand_b`.
+ * As saídas são atualizadas imediatamente quando qualquer entrada muda.
+ */
+
 #ifndef ALU_H
 #define ALU_H
 
@@ -21,10 +29,15 @@ namespace {
 }
 
 /**
- * @brief Unidade Lógica e Aritmética combinacional de 16 bits.
- * 
- * Executa uma operação definida por `operation_code` sobre `operand_a` e `operand_b`.
- * As saídas são atualizadas imediatamente quando qualquer entrada muda.
+ * @class ALU
+ * @brief Unidade Lógica e Aritmética (ALU) de 16 bits.
+ *
+ * Realiza operações aritméticas e lógicas entre dois operandos de 16 bits,
+ * controladas por um código de operação de 4 bits. As saídas incluem o
+ * resultado da operação e duas flags: negative (n) e zero (z).
+ *
+ * A lógica é puramente combinacional: qualquer alteração nas entradas
+ * a, b ou op dispara a atualização das saídas.
  */
 SC_MODULE(ALU) {
 public:
@@ -43,7 +56,6 @@ public:
 
         sc_uint<16> result_val = 0;
 
-        // Executa a operação selecionada
         switch (op_int) {
             case OP_AND: result_val = a_val & b_val;  break;
             case OP_OR:  result_val = a_val | b_val;  break;
@@ -65,7 +77,6 @@ public:
     }
 
     SC_CTOR(ALU) {
-        // Registrar o método de execução da operação, sensível a mudanças nas entradas (sem clock)
         SC_METHOD(execute_operation);
         sensitive << operand_a << operand_b << operation_code;
     }

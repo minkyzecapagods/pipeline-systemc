@@ -1,5 +1,5 @@
 /**
- * @file   alu_tester.cpp
+ * @file   tb_alu.cpp
  * @brief  Testbench para verificação funcional da ALU de 16 bits.
  */
 
@@ -238,7 +238,7 @@ int sc_main(int argc, char* argv[]) {
     ALU_Tester tester("ALU_Tester");
 
     // Rastreamento VCD
-    sc_trace_file* trace_file = sc_create_vcd_trace_file("alu_waves");
+    sc_trace_file* trace_file = sc_create_vcd_trace_file("waves/alu_waves");
     if (trace_file) {
         sc_trace(trace_file, tester.get_operand_a_signal(), "operand_a");
         sc_trace(trace_file, tester.get_operand_b_signal(), "operand_b");
