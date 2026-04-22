@@ -1,37 +1,43 @@
-# Caminho do SystemC (altere se necessário)
+# Caminho do SystemC (ajuste conforme necessário)
 SYSTEMC_HOME = /usr/local/systemc-3.0.2
+
+# Diretórios
+BUILD_DIR = build
 
 # Compilador e flags
 CXX = g++
 CXXFLAGS = -I. -Iinclude -I$(SYSTEMC_HOME)/include
 LDFLAGS = -L$(SYSTEMC_HOME)/lib-linux64 -lsystemc
 
-# Arquivos
-ALU_SRC = src/alu.cpp
-ALU_TB  = sim/tb_alu.cpp
-ALU_OBJ = alu.o tb_alu.o
-ALU_EXE = tb_alu
+# Regras
+.PHONY: all alu run clean
 
-# Alvo padrão: compila e executa a ALU
-all: run_alu
+all: alu
 
-# Compila os objetos
-alu.o: $(ALU_SRC) include/alu.h
-	$(CXX) $(CXXFLAGS) -c $(ALU_SRC) -o alu.o
+# Compila o testbench da ALU
+alu: $(BUILD_DIR)/tb_alu
 
-tb_alu.o: $(ALU_TB) include/alu.h
-	$(CXX) $(CXXFLAGS) -c $(ALU_TB) -o tb_alu.o
+# Cria o diretório build se não existir
+$(BUILD_DIR):
+	mkdir -p $@
 
-# Linka o executável
-$(ALU_EXE): alu.o tb_alu.o
-	$(CXX) $(ALU_OBJ) $(LDFLAGS) -o $(ALU_EXE)
+# Compila e linka o testbench
+$(BUILD_DIR)/tb_alu: sim/tb_alu.cpp include/alu.h | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) sim/tb_alu.cpp $(LDFLAGS) -o $@
 
-# Executa o testbench (depende do executável)
-run_alu: $(ALU_EXE)
-	./$(ALU_EXE)
+# Executa o testbench
+run_alu: $(BUILD_DIR)/tb_alu
+	./$(BUILD_DIR)/tb_alu
 
-# Limpeza
+# Limpeza: remove todo o diretório build e arquivos .vcd da raiz
 clean:
-	rm -f alu.o tb_alu.o $(ALU_EXE) *.vcd
+	rm -rf $(BUILD_DIR)
+	rm -f *.vcd
 
-.PHONY: all run_alu clean
+# Ajuda
+help:
+	@echo "Comandos disponíveis:"
+	@echo "  make alu   - Compila o testbench da ALU (executável em build/tb_alu)"
+	@echo "  make run   - Compila e executa o testbench"
+	@echo "  make clean - Remove o diretório build e arquivos .vcd"
+	@echo "  make help  - Exibe esta mensagem"
