@@ -1,53 +1,68 @@
+#ifndef _MIPS_TOP_H_
+#define _MIPS_TOP_H_
 #include "banco_registradores.h"
-#include "controle.h"
-#include "extensor_sinal.h"
-#include "memoria_dados.h"
 #include "memoria_instrucoes.h"
-#include "mux2.h"
 #include "pc.h"
 #include "registradores_pipeline.h"
 #include "somador.h"
-#include "ula.h"
 #include <systemc.h>
 
 SC_MODULE(MIPS_Top) {
-  // Porta de clock externa
+  // Pinos de I/O do processador[cite: 12]
   sc_in<bool> clk;
+  sc_in<bool> reset;
 
-  // Sinais Internos (Os "fios" que conectam tudo)
-  sc_signal<sc_uint<32>> sig_pc_in, sig_pc_out, sig_pc_4;
-  sc_signal<sc_uint<32>> sig_instrucao;
+  // Fios da placa (Sinais Internos)
   sc_signal<sc_uint<32>> sig_quatro;
-  // ... adicione todos os sinais para conectar ULA, Banco de Reg, etc.
+  sc_signal<sc_uint<32>> sig_pc_atual, sig_pc_mais_4;
+  sc_signal<sc_uint<32>> sig_instrucao_bruta;
 
-  // Instâncias dos Componentes
+  // Fios na saída do Registrador IF/ID
+  sc_signal<sc_uint<32>> sig_if_id_pc4;
+  sc_signal<sc_uint<32>> sig_if_id_inst;
+
+  // Instâncias
   PC *pc;
-  MemoriaInstrucoes *mem_inst;
   Somador *add_pc;
-  ULA *ula_principal;
-  // ... instancie todos os outros módulos
+  MemoriaInstrucoes *mem_inst;
+  Reg_IF_ID *reg_if_id;
 
   SC_CTOR(MIPS_Top) {
-    // 1. Instanciar PC e Memória de Instruções (Estágio IF)
+    sig_quatro.write(4); // Constante 4
+
+    // --- ESTÁGIO IF (Busca) ---
     pc = new PC("ProgramCounter");
     pc->clk(clk);
-    pc->pc_in(sig_pc_in);
-    pc->pc_out(sig_pc_out);
-
-    mem_inst = new MemoriaInstrucoes("MemoriaInst");
-    mem_inst->endereco(sig_pc_out);
-    mem_inst->instrucao(sig_instrucao);
+    pc->reset(reset);
+    pc->pc_in(
+        sig_pc_mais_4); // Por enquanto, liga direto no PC+4 (sem jumps ainda)
+    pc->pc_out(sig_pc_atual);
 
     add_pc = new Somador("SomadorPC");
-    add_pc->op_a(sig_pc_out);
-    add_pc->op_b(sig_quatro); // Soma 4 bytes
-    add_pc->resultado(sig_pc_4);
+    add_pc->op_a(sig_pc_atual);
+    add_pc->op_b(sig_quatro);
+    add_pc->resultado(sig_pc_mais_4);
 
-    // Escreva o valor constante no sinal
-    sig_quatro.write(4);
+    mem_inst = new MemoriaInstrucoes("ROM");
+    mem_inst->endereco(sig_pc_atual);
+    mem_inst->instrucao(sig_instrucao_bruta);
 
-    // 2. Conexões do restante do Datapath (ID, EX, MEM, WB)
-    // Aqui você conectará a ULA, Banco de Reg e os Registradores de Pipeline
-    // conforme o diagrama do MIPS.
+    // --- BARREIRA PIPELINE IF/ID ---
+    reg_if_id = new Reg_IF_ID("Pipeline_IF_ID");
+    reg_if_id->clk(clk);
+    reg_if_id->pc_plus_4_in(sig_pc_mais_4);
+    reg_if_id->inst_in(sig_instrucao_bruta);
+    reg_if_id->pc_plus_4_out(sig_if_id_pc4);
+    reg_if_id->inst_out(sig_if_id_inst);
+
+    // O estágio ID e os demais componentes entrariam daqui para baixo...
+  }
+
+  ~MIPS_Top() {
+    delete pc;
+    delete add_pc;
+    delete mem_inst;
+    delete reg_if_id;
   }
 };
+#endif

@@ -1,3 +1,5 @@
+#ifndef _SOMADOR_H_
+#define _SOMADOR_H_
 #include <systemc.h>
 
 SC_MODULE(Somador) {
@@ -12,3 +14,4 @@ SC_MODULE(Somador) {
     sensitive << op_a << op_b;
   }
 };
+#endif

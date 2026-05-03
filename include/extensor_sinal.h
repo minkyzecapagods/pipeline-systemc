@@ -1,3 +1,5 @@
+#ifndef _EXTENSOR_H_
+#define _EXTENSOR_H_
 #include <systemc.h>
 
 SC_MODULE(ExtensorSinal) {
@@ -14,3 +16,4 @@ SC_MODULE(ExtensorSinal) {
     sensitive << entrada;
   }
 };
+#endif

@@ -1,3 +1,5 @@
+#ifndef _BANCO_REG_H_
+#define _BANCO_REG_H_
 #include <systemc.h>
 
 SC_MODULE(BancoRegistradores) {
@@ -26,12 +28,11 @@ SC_MODULE(BancoRegistradores) {
 
   SC_CTOR(BancoRegistradores) {
     SC_METHOD(ler_dados);
-    sensitive << read_reg1 << read_reg2; // Sensível aos endereços de leitura
-
+    sensitive << read_reg1 << read_reg2;
     SC_METHOD(escrever_dados);
-    sensitive << clk.pos(); // Escrita síncrona
-
+    sensitive << clk.pos();
     for (int i = 0; i < 32; i++)
-      registradores[i] = 0; // Inicializa com 0
+      registradores[i] = 0;
   }
 };
+#endif

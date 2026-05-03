@@ -1,3 +1,5 @@
+#ifndef _MEM_DADOS_H_
+#define _MEM_DADOS_H_
 #include <systemc.h>
 
 SC_MODULE(MemoriaDados) {
@@ -6,7 +8,6 @@ SC_MODULE(MemoriaDados) {
   sc_in<sc_int<32>> write_data;
   sc_in<bool> mem_write;
   sc_in<bool> mem_read;
-
   sc_out<sc_int<32>> read_data;
 
   sc_int<32> memoria[1024];
@@ -32,11 +33,10 @@ SC_MODULE(MemoriaDados) {
   SC_CTOR(MemoriaDados) {
     SC_METHOD(ler);
     sensitive << endereco << mem_read;
-
     SC_METHOD(escrever);
     sensitive << clk.pos();
-
     for (int i = 0; i < 1024; i++)
       memoria[i] = 0;
   }
 };
+#endif
