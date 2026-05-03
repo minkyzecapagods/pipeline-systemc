@@ -17,6 +17,7 @@ SC_MODULE(Controle) {
   void decodificar() {
     sc_uint<6> op = opcode.read();
 
+    // Valores padrão (tudo zerado)
     reg_dst.write(false);
     alu_src.write(false);
     mem_to_reg.write(false);
@@ -26,11 +27,17 @@ SC_MODULE(Controle) {
     branch.write(false);
     alu_op.write(0);
 
-    if (op == 0) { // Tipo R
+    if (op == 0) { // Tipo R (ADD, SUB, AND, OR)
       reg_dst.write(true);
       reg_write.write(true);
       alu_op.write(2);
-    } else if (op == 35) { // LD[cite: 11]
+    } else if (op ==
+               8) { // LRI (Load Register Immediate / ADDI) <-- ADICIONE ISTO!
+      alu_src.write(
+          true); // Manda a ULA usar o valor Imediato (os 16 bits finais)
+      reg_write.write(true); // Libera a gravação no Banco de Registradores
+      alu_op.write(0);       // Diz para a ULA forçar uma SOMA (0)
+    } else if (op == 35) {   // LD
       alu_src.write(true);
       mem_to_reg.write(true);
       reg_write.write(true);

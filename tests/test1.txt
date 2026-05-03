@@ -1,0 +1,21 @@
+# 1. Carregar 5 no Registrador $1 (LRI $1, 5) -> Opcode 8
+20010005
+
+# 2. Carregar 3 no Registrador $2 (LRI $2, 3) -> Opcode 8
+20020003
+
+# 3. Bolhas de atraso para o pipeline dar tempo de salvar os registradores!
+00000000
+00000000
+00000000
+
+# 4. Somar $1 e $2 e guardar no $3 (ADD $3, $1, $2)
+00221820
+
+# 5. Bolhas de atraso
+00000000
+00000000
+00000000
+
+# 6. Subtrair $2 de $3 e guardar no $4 (SUB $4, $3, $2)
+00622022

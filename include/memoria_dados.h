@@ -4,7 +4,7 @@
 
 SC_MODULE(MemoriaDados) {
   sc_in<bool> clk;
-  sc_in<sc_uint<32>> endereco;
+  sc_in<sc_int<32>> endereco;
   sc_in<sc_int<32>> write_data;
   sc_in<bool> mem_write;
   sc_in<bool> mem_read;
