@@ -4,19 +4,18 @@
 
 SC_MODULE(ControleULA) {
   sc_in<sc_uint<2>> alu_op;
-  sc_in<sc_int<32>> imediato32; // Recebe o cabo inteiro
+  sc_in<sc_int<32>> imediato32;
   sc_out<sc_uint<4>> operacao_ula;
 
   void decodificar() {
     sc_uint<2> op = alu_op.read();
-    // Fatiamento dinamico a cada batida do relogio!
     sc_uint<6> f = imediato32.read().range(5, 0).to_uint();
     sc_uint<4> res = 0;
 
     if (op == 0) {
-      res = 2; // LD/ST/LRI forcam a ULA a Somar (ADD)
+      res = 2; // Memória e LRI forçam ADD
     } else if (op == 1) {
-      res = 6; // Branchs forcam Subtracao (SUB)
+      res = 7; // Branchs/Saltos condicionais forçam CMP
     } else if (op == 2) {
       switch (f) {
       case 32:
@@ -31,6 +30,15 @@ SC_MODULE(ControleULA) {
       case 37:
         res = 1;
         break; // OR
+      case 38:
+        res = 3;
+        break; // XOR
+      case 39:
+        res = 4;
+        break; // NOT
+      case 40:
+        res = 7;
+        break; // CMP
       default:
         res = 0;
         break;
@@ -41,7 +49,7 @@ SC_MODULE(ControleULA) {
 
   SC_CTOR(ControleULA) {
     SC_METHOD(decodificar);
-    sensitive << alu_op << imediato32; // Reage imediatamente!
+    sensitive << alu_op << imediato32;
   }
 };
 #endif
