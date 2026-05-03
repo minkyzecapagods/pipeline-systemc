@@ -1,0 +1,34 @@
+# 1. Carregar 10 no $1 (LRI $1, 10)
+2001000A
+
+# 2. Carregar 10 no $2 (LRI $2, 10)
+2002000A
+
+# 3. NOPs para estabilizar
+00000000
+00000000
+00000000
+
+# 4. SALTO CONDICIONAL (JZ $1, $2, +4) -> Pula 4 blocos se $1 for igual a $2
+# Como 10 == 10, o processador VAI acionar o pulo!
+10220004
+
+# ----- ZONA DE DELAY SLOT (Estas 2 instrucoes executam durante o pulo!) -----
+# 5. ADD $5, $1, $2 (Vai pro $5)
+00222820
+
+# 6. ADD $6, $1, $2 (Vai pro $6)
+00223020
+# ----------------------------------------------------------------------------
+
+# ----- ZONA PULADA (Estas instrucoes NAO podem aparecer no Write-Back!) -----
+# 7. SUB $7, $1, $2 
+00223822
+
+# 8. SUB $8, $1, $2 
+00224022
+# ----------------------------------------------------------------------------
+
+# 9. ATERRISSAGEM! O PC cai exatamente aqui.
+# AND $9, $1, $2 (Vai salvar 10 no $9)
+00224824

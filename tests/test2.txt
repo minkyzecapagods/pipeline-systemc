@@ -1,0 +1,29 @@
+# 1. Carregar 15 no Registrador $1 (LRI $1, 15)
+2001000F
+
+# 2. Carregar 4 no Registrador $2 (LRI $2, 4) -> Sera usado como Endereco Base
+20020004
+
+# 3. Bolhas (NOPs) para dar tempo de gravar $1 e $2
+00000000
+00000000
+00000000
+
+# 4. STORE: Salvar $1 na Memoria usando o endereco em $2 (ST $1, 0($2))
+AC410000
+
+# 5. Bolhas (NOPs) para a memoria estabilizar
+00000000
+00000000
+00000000
+
+# 6. LOAD: Ler o dado do endereco $2 e gravar no $3 (LD $3, 0($2))
+8C430000
+
+# 7. Bolhas (NOPs) para o dado chegar no Write-Back e voltar para o Banco
+00000000
+00000000
+00000000
+
+# 8. SOMA: Adicionar $3 + $3 e guardar no $4 (Para provar que leu o 15 da RAM!)
+00632020
