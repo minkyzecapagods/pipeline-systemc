@@ -13,22 +13,20 @@
 # Como 10 == 10, o processador VAI acionar o pulo!
 10220004
 
-# ----- ZONA DE DELAY SLOT (Estas 2 instrucoes executam durante o pulo!) -----
+# ZONA DE DELAY SLOT (proximas 2 instrucoes executam durante o pulo)
 # 5. ADD $5, $1, $2 (Vai pro $5)
 00222820
 
 # 6. ADD $6, $1, $2 (Vai pro $6)
 00223020
-# ----------------------------------------------------------------------------
 
-# ----- ZONA PULADA (Estas instrucoes NAO podem aparecer no Write-Back!) -----
+# ZONA PULADA (proximas 2 instrucoes nao podem aparecer no WB)
 # 7. SUB $7, $1, $2 
 00223822
 
 # 8. SUB $8, $1, $2 
 00224022
-# ----------------------------------------------------------------------------
 
-# 9. ATERRISSAGEM! O PC cai exatamente aqui.
+# 9. O PC deve cair exatamente aqui
 # AND $9, $1, $2 (Vai salvar 10 no $9)
 00224824

@@ -4,7 +4,7 @@
 # 2. Carregar 3 no Registrador $2 (LRI $2, 3) -> Opcode 8
 20020003
 
-# 3. Bolhas de atraso para o pipeline dar tempo de salvar os registradores!
+# 3. Bolhas de atraso para o pipeline dar tempo de salvar os registradores
 00000000
 00000000
 00000000

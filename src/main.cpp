@@ -5,52 +5,51 @@
 #include <systemc.h>
 #include <vector>
 
-int sc_main(int argc, char *argv[]) {
-  std::cout << "Inicializando Simulacao Profissional do Pipeline MIPS..."
-            << std::endl;
+using namespace std;
 
-  // 1. Verificacao do argumento de linha de comando
+int sc_main(int argc, char *argv[]) {
+  cout << "Inicializando Simulacao Profissional do Pipeline MIPS..." << endl;
+
+  // Verificacao do argumento de linha de comando
   if (argc < 2) {
-    std::cerr << "Erro: Nenhum arquivo de teste fornecido." << std::endl;
-    std::cerr << "Uso: ./mips_sim <caminho_para_arquivo.txt>" << std::endl;
+    cerr << "Erro: Nenhum arquivo de teste fornecido." << endl;
+    cerr << "Uso: ./mips_sim <caminho_para_arquivo.txt>" << endl;
     return 1;
   }
 
-  std::string caminho_arquivo = argv[1];
-  std::cout << "Lendo arquivo de instrucoes: " << caminho_arquivo << std::endl;
+  string caminho_arquivo = argv[1];
+  cout << "Lendo arquivo de instrucoes: " << caminho_arquivo << endl;
 
-  // 2. Leitura do arquivo de texto
-  std::vector<sc_uint<32>> algoritmo;
-  std::ifstream arquivo(caminho_arquivo);
+  // Leitura do arquivo de texto
+  vector<sc_uint<32>> algoritmo;
+  ifstream arquivo(caminho_arquivo);
 
   if (!arquivo.is_open()) {
-    std::cerr << "Erro: Nao foi possivel abrir o arquivo " << caminho_arquivo
-              << std::endl;
+    cerr << "Erro: Nao foi possivel abrir o arquivo " << caminho_arquivo << endl;
     return 1;
   }
 
-  std::string linha;
-  while (std::getline(arquivo, linha)) {
-    // Ignorar linhas vazias ou comentários (iniciados com # ou //)
+  string linha;
+  while (getline(arquivo, linha)) {
+    // Ignora linhas vazias ou comentários (iniciados com # ou //)
     if (linha.empty() || linha[0] == '#' || linha[0] == '/') {
       continue;
     }
 
-    // Converter a string em hexadecimal para um inteiro de 32 bits
+    // Converte a string em hexadecimal para um inteiro de 32 bits
     try {
-      sc_uint<32> instrucao = std::stoul(linha, nullptr, 16);
+      sc_uint<32> instrucao = stoul(linha, nullptr, 16);
       algoritmo.push_back(instrucao);
-    } catch (const std::exception &e) {
-      std::cerr << "Aviso: Linha ignorada por formato invalido -> " << linha
-                << std::endl;
+    } catch (const exception &e) {
+      cerr << "Aviso: Linha ignorada por formato invalido -> " << linha << endl;
     }
   }
+
   arquivo.close();
 
-  std::cout << "Foram carregadas " << algoritmo.size() << " instrucoes."
-            << std::endl;
+  cout << "Foram carregadas " << algoritmo.size() << " instrucoes." << endl;
 
-  // 3. Instanciando o Microprocessador
+  // Instanciando o Microprocessador
   sc_clock clk("clk", 10, SC_NS);
   sc_signal<bool> reset;
 
@@ -58,11 +57,11 @@ int sc_main(int argc, char *argv[]) {
   mips.clk(clk);
   mips.reset(reset);
 
-  // 4. Carregando na memoria ROM do chip
+  // Carrega algoritmo na memoria de instrução
   mips.mem_inst->carregar_programa(algoritmo);
 
-  // 5. Configuração do GTKWave
-  sc_trace_file *wf = sc_create_vcd_trace_file("simulacao_mips_final");
+  // Configuração do GTKWave
+  sc_trace_file *wf = sc_create_vcd_trace_file("simulacao");
   sc_trace(wf, clk, "1_Clock");
   sc_trace(wf, mips.sig_if_id_inst, "2_IF_Instrucao");
   sc_trace(wf, mips.sig_rs, "3_ID_RS");
@@ -71,19 +70,18 @@ int sc_main(int argc, char *argv[]) {
   sc_trace(wf, mips.sig_wb_dado_final, "6_WB_Dado_Escrito");
   sc_trace(wf, mips.sig_mem_wb_reg_dst, "7_WB_Reg_Destino");
 
-  // 6. Execução do Pipeline
+  // Execução do Pipeline
   reset.write(true);
   sc_start(10, SC_NS); // Reset inicial
   reset.write(false);
 
-  // Roda os ciclos necessários (pode aumentar se o arquivo for grande)
+  // Roda os ciclos necessários (cap pro tamanho do algoritmo)
   sc_start(150, SC_NS);
 
   sc_close_vcd_trace_file(wf);
 
-  std::cout << "\nSimulacao concluida com sucesso!" << std::endl;
-  std::cout << "Verifique o arquivo 'simulacao_mips_final.vcd' no GTKWave."
-            << std::endl;
+  cout << "\nSimulacao concluida com sucesso!" << endl;
+  cout << "Verifique o arquivo 'simulacao_mips_final.vcd' no GTKWave." << endl;
 
   return 0;
 }

@@ -1,0 +1,9 @@
+# Diretórios gerados pelo Makefile
+build/
+waves/
+
+# Arquivos de simulação (VCD)
+*.vcd
+
+# Executáveis (se gerados fora de build/)
+mips_sim
