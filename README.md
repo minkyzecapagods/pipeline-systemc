@@ -59,8 +59,10 @@ IF → ID → EX → MEM → WB
 ```
 pipeline-systemc/
 
-├── docs/
+├── docs/ 
+│   ├── diagram.png             # Diagrama de blocos
 │   ├── especificacao.pdf       # Especificações para o trabalho
+│   ├── estados_pipeline.png    # Diagrama de pipeline
 │   └── relatorio.pdf           # Relatório para entrega do trabalho
 ├── include/
 │   ├── banco_registradores.h   # Banco de 32 registradores (leitura combinacional, escrita síncrona)
