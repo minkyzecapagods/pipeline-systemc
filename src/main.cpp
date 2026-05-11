@@ -81,7 +81,7 @@ int sc_main(int argc, char *argv[]) {
   sc_close_vcd_trace_file(wf);
 
   cout << "\nSimulacao concluida com sucesso!" << endl;
-  cout << "Verifique o arquivo 'simulacao_mips_final.vcd' no GTKWave." << endl;
+  cout << "Verifique o arquivo 'simulacao.vcd' no GTKWave." << endl;
 
   return 0;
 }
